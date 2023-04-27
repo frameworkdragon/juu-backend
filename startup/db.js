@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const MONGODB_URI = "mongodb+srv://arishmitg:arighosh4325@cluster0.pa17a.mongodb.net/JUUIndia?retryWrites=true&w=majority";
+// const MONGODB_URI = "mongodb+srv://arishmitg:arighosh4325@cluster0.pa17a.mongodb.net/JUUIndia?retryWrites=true&w=majority";
+const MONGODB_URI = "mongodb+srv://mongoTaskManager:testing123@taskmanager.uzhkr3h.mongodb.net/Juu-Test?retryWrites=true&w=majority"
 
 const connectDB = () => {
   mongoose
