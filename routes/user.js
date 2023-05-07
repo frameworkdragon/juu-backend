@@ -1,13 +1,20 @@
-require("dotenv").config();
-const { Router } = require("express");
-const router = Router();
+const { Router } = require('express')
+const router = Router()
 
-const UserController = require("../controller/userController");
-const {  isAuthenticated } = require("../middlewares/auth");
+const {
+  login,
+  register,
+  getUser,
+  editUser,
+} = require('../controller/userController')
+const { isAuthenticated } = require('../middlewares/auth')
 
-router.post("/login", UserController.login);
-router.post("/register", UserController.register);
-router.patch("/:id", isAuthenticated, UserController.editUser);
-router.get("/:id", isAuthenticated, UserController.getUser);
+// User
+router.post('/register', register)
+router.post('/login', login)
+router
+  .route('/:id')
+  .get(isAuthenticated, getUser)
+  .patch(isAuthenticated, editUser)
 
-module.exports = router;
+module.exports = router

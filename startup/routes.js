@@ -1,33 +1,28 @@
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const qrCodeRoute = require('../routes/qrCode')
-const UserController = require('../controller/userController')
-const productController = require('../controller/productController')
-const cartController = require('../controller/cartController')
-const tagController = require('../controller/tagController')
-
-const multer = require('multer')
-const upload = multer({ dest: './temp/data/uploads/' })
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const qrCodeRouter = require('../routes/qrCode');
+const userRouter = require('../routes/user');
+const tagRouter = require('../routes/tag');
+const productRouter = require('../routes/product');
+const cartRouter = require('../routes/cart');
+const paymentRouter = require('../routes/payment');
 
 module.exports = (app) => {
-  app.use(cors())
-  app.use(bodyParser.json())
+  app.use(cors());
+  app.use(bodyParser.json());
 
-  app.use('/qrcodes', qrCodeRoute)
+  app.use('/api/qrcodes', qrCodeRouter);
+  app.use('/api/user', userRouter);
+  app.use('/api/tag', tagRouter);
+  app.use('/api/product', productRouter);
+  app.use('/api/cart', cartRouter);
+  app.use('/api/payment', paymentRouter);
 
-  app.get('/clearTag', tagController.clearTag)
-  app.get('/activeTag', UserController.activeTag)
-  app.get('/getCart', cartController.getCart)
-  app.get('/login', UserController.login)
-  app.get('/getProduct', productController.getProductData)
-  app.get('/:id', UserController.getUser)
-
-  app.post('/register', UserController.register)
-  app.patch('/:id', UserController.editUser)
   //app.use("/api/video", video);
-  app.post('/upload', upload.single('file'), productController.uploadData)
   //app.post('/addToCart', productController.addProductToUserCart);
-  app.post('/cart', cartController.userCart)
-  app.post('/addCart', cartController.addProductToCart)
-  app.post('/generateTag', tagController.generateTag)
-}
+
+  // If no routes match
+  app.use('*', (req, res) =>
+    res.status(404).json({ success: false, message: 'Route does not exist' })
+  );
+};

@@ -1,23 +1,15 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const QRCodeSchema = mongoose.Schema({
-  // product: {
-  //   type: mongoose.Types.ObjectId,
-  //   required: true,
-  //   ref: 'Product',
-  // },
-  productName: {
+  qrCodeID: {
     type: String,
-    required: true,
+  },
+  image: {
+    type: String,
   },
   description: {
     type: String,
-    required: true,
   },
-  imageUrl: {
-    type: String,
-    required: true,
-  },
-})
+});
 
-module.exports = mongoose.model('QRCode', QRCodeSchema)
+module.exports = mongoose.model('QRCode', QRCodeSchema);

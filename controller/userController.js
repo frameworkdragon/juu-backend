@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcryptjs");
 const User = require("../models/Customer");
 
 const {
@@ -16,7 +16,7 @@ const register = async (req, res) => {
         errMessage: "User with similar email address exists",
       });
     }
-    if((await checkIfUserWithMobileExists(mobile)).exists) {
+    if ((await checkIfUserWithMobileExists(mobile)).exists) {
       return res.json({
         success: false,
         errType: "Validation Error",
@@ -32,7 +32,7 @@ const register = async (req, res) => {
       username: name,
       email,
       password: passHash,
-      mobile
+      mobile,
     });
 
     await user.save();
@@ -55,9 +55,7 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne(
-      { email: email },
-    );
+    const user = await User.findOne({ email: email });
 
     if (!user) {
       return res.status(400).json({
@@ -67,19 +65,21 @@ const login = async (req, res) => {
       });
     }
 
-    if(bcrypt.compareSync(password, user.password)){
+    const { username, mobile, verified } = user;
+
+    if (bcrypt.compareSync(password, user.password)) {
       return res.status(200).json({
         success: true,
         message: "Login Successful",
+        user: { username, email, mobile, verified },
       });
-    }else{
+    } else {
       return res.status(400).json({
         success: false,
         errorType: "Bad Request",
         errorMessage: "Invalid Password", // user dne
       });
     }
-    
   } catch (err) {
     console.log(err);
     return res.status(500).json({
@@ -92,7 +92,6 @@ const login = async (req, res) => {
 
 const editUser = async (req, res) => {
   // validate if user id is of type MongoDB Object ID
-
   try {
     const id = req.params.id;
 
@@ -171,28 +170,9 @@ const getUser = async (req, res) => {
   }
 };
 
-const activeTag = async (req, res) => {
-    const {email} = req.body;
-   
-    let user = await User.findOne({ _id: id });
-    if (user) {
-      return res.json({
-        success: true,
-        data: user,
-      });
-    }
-
-    let tag = user.userTag;
-    if(tag == -1) {
-      return res.status(400).json({"success" : false, "msg": "user does not have an active tag"});
-    }
-    return res.status(200).json({"success": true, "tag": tag});
-}
-
 module.exports = {
   editUser,
   getUser,
   login,
   register,
-  activeTag
 };

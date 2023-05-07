@@ -1,60 +1,86 @@
-let data = {};
-let status = {};
-let assignedTag = {};
 const User = require('../models/Customer');
+const Tag = require('../models/Tag');
 
-const generateTag = async (req, res) => {
+const activeTag = async (req, res, next) => {
+  try {
     const { email } = req.body;
-    console.log(email);
 
-    const user = await User.findOne({email});
-    if(user == undefined) {
-        return res.status(400).json({
-            "success": false,
-            "msg": "User not found",
-        });
+    let tag = await Tag.findOne({ email });
+    if (!tag) {
+      return res
+        .status(400)
+        .json({ success: false, msg: 'User does not have an active tag.' });
+    }
+    return res.status(200).json({ success: true, tag });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      success: false,
+      errorMessage: 'Internal Server Error',
+      errorType: 'Internal Server Error',
+    });
+  }
+};
+
+const attachTagToUser = async (req, res) => {
+  try {
+    const { email, tagID } = req.body;
+
+    const user = await User.findOne({ email });
+    if (user == undefined) {
+      return res.status(400).json({
+        success: false,
+        msg: 'User not found',
+      });
     }
 
-    if(status[email] == true) {
-        return res.status(400).json({"success" : false, "msg": "User already has an active tag", "tag": assignedTag[email]});
+    const activeTag = await Tag.findOne({
+      $or: [{ email }, { tagID }],
+    });
+    if (activeTag) {
+      return res.status(400).json({
+        success: false,
+        msg:
+          activeTag.email == email
+            ? 'User already has an active tag'
+            : 'Scanned tag is assigned to another user. Please choose another tag',
+        tag: activeTag,
+      });
     }
-    var tag;
-    for(var i = 0; i<1000; i++) {
-        tag = i;
-        if(data[tag] == 0 || data[tag] == undefined){
-            data[tag] = email;
-            status[email] = true;
-            console.log(status);
-            assignedTag[email] = tag;
 
-            await user.update({ userTag: tag });
+    const tag = await Tag.findOneAndUpdate({ tagID }, { email });
 
-            console.log(tag)
-            break;
-        }
-    }
-    return res.status(200).json({"success": true, "user": await User.findOne({email})});
-}
-  
+    return res.status(200).json({ success: true, tag });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      success: false,
+      errorMessage: 'Internal Server Error',
+      errorType: 'Internal Server Error',
+    });
+  }
+};
+
 const clearTag = async (req, res) => {
-    const { email, tag } = req.body;
+  try {
+    const { email } = req.body;
 
-    const user = await User.findOne({email});
-    if(user == undefined) {
-        return res.status(400).json({
-            "success": false,
-            "msg": "User not found",
-        });
-    }
+    const tag = await Tag.findOne({ email });
+    await tag.resetTag();
 
-    if(data[user.userTag] !== undefined){
-        data[user.userTag] = "";
-        await user.update({ userTag: -1});
-    }
-    return res.status(200).json({"success": true, "user": await User.findOne({email})});
-}
+    return res.status(200).json({ success: true, tag });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      success: false,
+      errorMessage: 'Internal Server Error',
+      errorType: 'Internal Server Error',
+    });
+  }
+};
 
 module.exports = {
-    generateTag,
-    clearTag
-}
+  activeTag,
+  attachTagToUser,
+  clearTag,
+};
