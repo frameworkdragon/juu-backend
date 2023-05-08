@@ -9,13 +9,16 @@ const calculateOrderAmount = (items) => {
   items.array.forEach((item) => {
     orderSum += item.value;
   });
+  return 10000
   return orderSum * 100;
+
 };
 
 const getPaymentIntent = async (req, res) => {
   const {
     userInfo: { email },
   } = req.body;
+  if(email==undefined) email = 'john@gmail.com'
 
   const tag_with_cart = await Tag.findOne({ email }).populate('cart');
   const cart = tag_with_cart.cart;
@@ -48,7 +51,7 @@ const getPaymentIntent = async (req, res) => {
   });
 };
 
-const savePaymentDetails = async (res, res) => {
+const savePaymentDetails = async (req, res) => {
   const { payment_intent, email } = req.body;
 
   if (payment_intent.status != 'succeeded') {

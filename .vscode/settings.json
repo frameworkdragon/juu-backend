@@ -1,0 +1,4 @@
+{
+  "appService.defaultWebAppToDeploy": "/subscriptions/4a8bfa91-2e35-4bb4-9cd5-56e67c586e17/resourceGroups/Mobile_app_developer_team/providers/Microsoft.Web/sites/juuBackendtest456",
+  "appService.deploySubpath": "newJuuBackend"
+}
