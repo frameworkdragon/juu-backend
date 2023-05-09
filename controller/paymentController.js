@@ -13,39 +13,29 @@ const calculateOrderAmount = (items) => {
   items.array.forEach((item) => {
     orderSum += item.value
   })
+  return 10599
   return orderSum * 100
 }
 
 const getPaymentIntent = async (req, res) => {
   const { email } = req.body
 
-  const tag_with_cart = await Tag.findOne({ email }).populate('cart')
-  const cart = tag_with_cart.cart
-
-  const ephemeralKey = await stripe.ephemeralKeys.create(
-    { customer: email },
-    { apiVerson: '2020-08-27' }
-  )
+  // const tag_with_cart = await Tag.findOne({ email }).populate('cart')
+  // const cart = tag_with_cart.cart
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: calculateOrderAmount(cart.items),
+    amount: 10599,
     currency: 'inr',
-    automatic_payment_methods: {
-      enabled: true,
-    },
-    customer: email,
   })
 
-  tag_with_cart.paymentIntent = paymentIntent
-  await tag_with_cart.save()
+  // tag_with_cart.paymentIntent = paymentIntent
+  // await tag_with_cart.save()
 
   res.json({
     success: true,
     message: 'Payment Intent created successfully',
-    clientSecret: paymentIntent.client_secret,
-    ephemeralKey: ephemeralKey.secret,
-    customer: email,
+    paymentIntent: paymentIntent.client_secret,
   })
 }
 
