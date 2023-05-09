@@ -1,12 +1,12 @@
-const { Router } = require('express');
-const router = Router();
+const { Router } = require('express')
+const router = Router()
 
 const {
   getPaymentIntent,
   savePaymentDetails,
-} = require('../controller/paymentController');
+} = require('../controller/paymentController')
 
-router.route('/create-checkout-session').get(getPaymentIntent);
-router.route('/save-payment-details').post(savePaymentDetails);
+router.route('/create-checkout-session').post(getPaymentIntent)
+router.route('/save-payment-details').post(savePaymentDetails)
 
-module.exports = router;
+module.exports = router

@@ -8,9 +8,9 @@ const {
   removeProductFromCart,
 } = require('../controller/cartController');
 
-router.route('/getCart').get(getCart);
+router.route('/get-cart').get(getCart);
 router.route('/getUserCart').get(getUserCart);
-router.route('/addProductToCart').post(addProductToCart);
+router.route('/add-product-to-cart').post(addProductToCart);
 router.route('/removeProductFromCart').post(removeProductFromCart);
 
 module.exports = router;

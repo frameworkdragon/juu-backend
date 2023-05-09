@@ -38,18 +38,31 @@ const attachTagToUser = async (req, res) => {
       $or: [{ email }, { tagID }],
     })
     if (activeTag) {
+      console.log(activeTag)
       return res.status(400).json({
         success: false,
         message:
           activeTag.email == email
             ? 'User already has an active tag'
             : 'Scanned tag is assigned to another user. Please choose another tag',
-        tag: activeTag,
       })
     }
 
-    const tag = await Tag.findOneAndUpdate({ tagID }, { email })
+    const tag = await Tag.findOne({ tagID })
+    if (!tag) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          message: 'This tag does not exist',
+          type: 'Internal Server Error',
+        },
+      })
+    }
 
+    tag.email = email
+    await tag.save()
+
+    console.log(tag)
     return res.status(200).json({
       success: true,
       tag,
@@ -72,7 +85,6 @@ const clearTag = async (req, res) => {
     const { email } = req.body
 
     const tag = await Tag.findOne({ email })
-    await tag.resetTag()
 
     return res.status(200).json({ success: true, tag })
   } catch (err) {
