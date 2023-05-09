@@ -85,8 +85,14 @@ const clearTag = async (req, res) => {
   }
 }
 
+const deleteAllTag = async (req, res) => {
+  const tags = await Tag.deleteMany({})
+  return res.json({ tags })
+}
+
 module.exports = {
   activeTag,
   attachTagToUser,
   clearTag,
+  deleteAllTag,
 }
