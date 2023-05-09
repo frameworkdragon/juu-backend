@@ -38,8 +38,7 @@ const addProductToCart = async (req, res) => {
   const product = await Product.findOne({ tag: productID })
 
   const response = await checkItemPresentInCart(cart, productID)
-  console.log(response)
-  console.log(1, cart)
+
   if (response.present) {
     const updatedCart = await Cart.findByIdAndUpdate(
       cart._id,
@@ -51,7 +50,6 @@ const addProductToCart = async (req, res) => {
       },
       { arrayFilters: [{ 'elem.productID': productID }] }
     )
-    console.log(2, updatedCart)
     return res.status(200).json({
       success: true,
       messsage: 'Cart updated',
@@ -71,7 +69,6 @@ const addProductToCart = async (req, res) => {
     { $push: { items: item } },
     { new: true }
   )
-  console.log(3, newCart)
 
   return res.status(200).json({ success: true, message: 'Item added to cart' })
 }

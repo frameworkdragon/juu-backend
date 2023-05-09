@@ -6,6 +6,7 @@ const tagRouter = require('../routes/tag')
 const productRouter = require('../routes/product')
 const cartRouter = require('../routes/cart')
 const paymentRouter = require('../routes/payment')
+const utilRoutes = require('../routes/utilRoutes')
 
 module.exports = (app) => {
   app.use(cors())
@@ -17,6 +18,7 @@ module.exports = (app) => {
   app.use('/api/product', productRouter)
   app.use('/api/cart', cartRouter)
   app.use('/api/payment', paymentRouter)
+  app.use('/api/util', utilRoutes)
 
   //app.use("/api/video", video);
   //app.post('/addToCart', productController.addProductToUserCart);

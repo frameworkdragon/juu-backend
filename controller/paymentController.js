@@ -13,30 +13,38 @@ const calculateOrderAmount = (items) => {
   items.array.forEach((item) => {
     orderSum += item.value
   })
-  return 10599
+  // return 10599
   return orderSum * 100
 }
 
 const getPaymentIntent = async (req, res) => {
-  const { email } = req.body
+  try {
+    const { email } = req.body
 
-  // const tag_with_cart = await Tag.findOne({ email }).populate('cart')
-  // const cart = tag_with_cart.cart
+    const tag_with_cart = await Tag.findOne({ email }).populate('cart')
+    const cart = tag_with_cart.cart
 
-  // Create a PaymentIntent with the order amount and currency
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: 10599,
-    currency: 'inr',
-  })
+    // Create a PaymentIntent with the order amount and currency
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: calculateOrderAmount(cart.items),
+      currency: 'inr',
+    })
 
-  // tag_with_cart.paymentIntent = paymentIntent
-  // await tag_with_cart.save()
+    tag_with_cart.paymentIntent = paymentIntent
+    await tag_with_cart.save()
 
-  res.json({
-    success: true,
-    message: 'Payment Intent created successfully',
-    paymentIntent: paymentIntent.client_secret,
-  })
+    res.json({
+      success: true,
+      message: 'Payment Intent created successfully',
+      paymentIntent: paymentIntent.client_secret,
+      checkoutInfo: { amount, ...cart },
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: { message: error, type: 'Internal Server Error' },
+    })
+  }
 }
 
 const savePaymentDetails = async (req, res) => {
