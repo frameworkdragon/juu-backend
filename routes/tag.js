@@ -1,18 +1,18 @@
-const { Router } = require("express");
-const router = Router();
+const { Router } = require('express')
+const router = Router()
 
-const { isAuthenticated } = require("../middlewares/auth");
+const { isAuthenticated } = require('../middlewares/auth')
 
 const {
   activeTag,
   clearTag,
   attachTagToUser,
-} = require("../controller/tagController");
+} = require('../controller/tagController')
 
 // Tag
-router.route("/activeTag").get(activeTag);
+router.route('/activeTag').get(activeTag)
 
-router.route("/clearTag").get(clearTag);
-router.route("/attachTagToUser").post(attachTagToUser);
+router.route('/clearTag').get(clearTag)
+router.route('/attach-tag').post(attachTagToUser)
 
-module.exports = router;
+module.exports = router

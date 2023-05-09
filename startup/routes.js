@@ -20,7 +20,7 @@ module.exports = (app) => {
 
   //app.use("/api/video", video);
   //app.post('/addToCart', productController.addProductToUserCart);
-  app.use('/test', (req, res) =>
+  app.use('/api/test', (req, res) =>
     res.status(200).json({ success: false, message: 'test' })
   );
   // If no routes match

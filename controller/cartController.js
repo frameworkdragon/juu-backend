@@ -24,7 +24,7 @@ const getCart = async (req, res) => {
 };
 
 const addProductToCart = async (req, res) => {
-  const { tagID, productTag, qty } = req.body;
+  const { tagID, productID, qty } = req.body;
   console.log(req.body);
 
   const tag_with_cart = await Tag.findOne({ tagID }).populate('cart');
@@ -35,10 +35,10 @@ const addProductToCart = async (req, res) => {
 
   const cart = tag_with_cart.cart;
 
-  const product = await Product.findOne({ tag: productTag });
+  const product = await Product.findOne({ tag: productID });
   console.log(product);
 
-  const response = await checkItemPresentInCart(cart, productTag);
+  const response = await checkItemPresentInCart(cart, productID);
   console.log(response);
   if (response.present) {
     await Cart.findByIdAndUpdate(
@@ -49,7 +49,7 @@ const addProductToCart = async (req, res) => {
           'items.$[elem].value': qty * product.price,
         },
       },
-      { arrayFilters: [{ 'elem.tag': productTag }] }
+      { arrayFilters: [{ 'elem.tag': productID }] }
     );
 
     return res.status(200).json({
@@ -61,7 +61,7 @@ const addProductToCart = async (req, res) => {
   const item = {
     quantity: qty,
     value: product.price * qty,
-    productTag,
+    productID,
   };
 
   await Cart.findByIdAndUpdate(cart._id, { $push: { items: item } });
@@ -70,15 +70,15 @@ const addProductToCart = async (req, res) => {
 };
 
 const removeProductFromCart = async (req, res) => {
-  const { tagID, productTag } = req.body;
+  const { tagID, productID } = req.body;
 
   const tag_with_cart = await Tag.findOne({ tagID }).populate('cart');
 
-  const response = await checkItemPresentInCart(tag_with_cart.cart, productTag);
+  const response = await checkItemPresentInCart(tag_with_cart.cart, productID);
   console.log(response);
   if (response.present) {
     const cart = await Cart.findById(tag_with_cart.cart._id);
-    cart.items = cart.items.filter((item) => item.productTag !== productTag);
+    cart.items = cart.items.filter((item) => item.productID !== productID);
     await cart.save();
 
     return res.status(200).json({

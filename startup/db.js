@@ -1,26 +1,40 @@
-require("dotenv").config({ path: __dirname + "../.env" });
-const mongoose = require("mongoose");
+require('dotenv').config({ path: __dirname + '../.env' })
+const mongoose = require('mongoose')
 
+// const connectDB = () => {
+//   mongoose
+//     .connect(
+//       process.env.COSMOSDB_URI,
+//       {
+//         ssl: true,
+//         auth: {
+//           username: process.env.COSMOSDB_USER,
+//           password: process.env.COSMOSDB_PASSWORD,
+//         },
+//       },
+//       {
+//         useNewUrlParser: true,
+//         useUnifiedTopology: true,
+//       }
+//     )
+//     .then(() => console.log('Database Connection Established'))
+//     .catch((err) => {
+//       console.log('Error connecting to Database: ' + err)
+//     })
+// }
+
+const mongo_string =
+  'mongodb+srv://mongoTaskManager:testing123@taskmanager.uzhkr3h.mongodb.net/JuuBackend?retryWrites=true&w=majority'
 const connectDB = () => {
-  mongoose
-    .connect(
-      process.env.COSMOSDB_URI,
-      {
-        ssl: true,
-        auth: {
-          username: process.env.COSMOSDB_USER,
-          password: process.env.COSMOSDB_PASSWORD,
-        },
-      },
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      }
-    )
-    .then(() => console.log("Database Connection Established"))
+  return mongoose
+    .connect(mongo_string, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+    .then(() => console.log('Database Connection Established'))
     .catch((err) => {
-      console.log("Error connecting to Database: " + err);
-    });
-};
+      console.log('Error connecting to Database: ' + err)
+    })
+}
 
-module.exports = connectDB;
+module.exports = connectDB

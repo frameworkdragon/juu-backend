@@ -23,7 +23,7 @@ const getQRCode = async (req, res) => {
   }
 };
 
-// POST /qrcodes
+// POST /qrcodes/
 // Creates a QRCode in database
 const createQRCode = async (req, res) => {
   try {
@@ -42,9 +42,9 @@ const createQRCode = async (req, res) => {
 
     return res.json({
       qrCode,
-      tag,
+      tag,cart,
       success: true,
-      message: 'QRCode Details Saved Successfully',
+      message: 'QRCode Details and Tag saved Successfully',
     });
   } catch (err) {
     console.log(err);
