@@ -27,8 +27,5 @@
     "qrcode": "^1.5.3",
     "stripe": "^12.3.0",
     "morgan": "^1.10.0"
-  },
-  "devDependencies": {
-    "morgan": "^1.10.0"
   }
 }
