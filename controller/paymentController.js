@@ -9,11 +9,10 @@ const Customer = require('../models/Customer')
 const Tag = require('../models/Tag')
 
 const calculateOrderAmount = (items) => {
-  const orderSum = 0
-  items.array.forEach((item) => {
+  let orderSum = 0
+  items.forEach((item) => {
     orderSum += item.value
   })
-  // return 10599
   return orderSum * 100
 }
 
@@ -22,17 +21,24 @@ const getPaymentIntent = async (req, res) => {
     const { email } = req.body
 
     const tag_with_cart = await Tag.findOne({ email }).populate('cart')
-    const cart = tag_with_cart.cart
+    const cart = tag_with_cart.cart.toObject()
 
+    if (cart.length < 1) {
+      return res.status(400).json({
+        success: false,
+        error: { message: error, type: 'Cart is empty.' },
+      })
+    }
+
+    const amount = calculateOrderAmount(cart.items)
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: calculateOrderAmount(cart.items),
+      amount,
       currency: 'inr',
     })
-
+    console.log('first')
     tag_with_cart.paymentIntent = paymentIntent
     await tag_with_cart.save()
-
     res.json({
       success: true,
       message: 'Payment Intent created successfully',

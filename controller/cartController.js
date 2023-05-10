@@ -5,11 +5,10 @@ const Tag = require('../models/Tag')
 const { checkItemPresentInCart } = require('../utils')
 
 const getCart = async (req, res) => {
-  const { tagID } = req.params
+  const { tagID } = req.query
 
   try {
     const tag_with_cart = await Tag.findOne({ tagID }).populate('cart')
-    console.log(tag_with_cart.cart)
 
     if (tag_with_cart.cart)
       return res.status(200).json({
@@ -57,10 +56,10 @@ const addProductToCart = async (req, res) => {
   }
 
   const item = {
-    quantity,
+    quantity:qty,
     value: product.price * qty,
     productID,
-    price,
+    price: product.price,
     name: product.name,
   }
 

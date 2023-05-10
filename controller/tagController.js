@@ -37,8 +37,13 @@ const attachTagToUser = async (req, res) => {
     const activeTag = await Tag.findOne({
       $or: [{ email }, { tagID }],
     })
-    if (activeTag) {
-      console.log(activeTag)
+    if(!activeTag){
+      return res.status(400).json({
+        success: false,
+        message:'This Tag is invalid, Please look for another one.'
+      })
+    }
+    if (activeTag.email) {
       return res.status(400).json({
         success: false,
         message:
@@ -62,7 +67,6 @@ const attachTagToUser = async (req, res) => {
     tag.email = email
     await tag.save()
 
-    console.log(tag)
     return res.status(200).json({
       success: true,
       tag,
