@@ -5,7 +5,9 @@ const morgan = require('morgan')
 const express = require('express')
 const app = express()
 
-app.use(morgan('dev'))
+if (process.env.NODE_ENV !== 'production') {
+  app.use(morgan('dev'))
+}
 
 require('./startup/db')()
 require('./startup/routes')(app)
