@@ -24,7 +24,7 @@ const mongoose = require('mongoose')
 // }
 
 const mongo_string =
-  'mongodb+srv://mongoTaskManager:testing123@taskmanager.uzhkr3h.mongodb.net/JuuBackend?retryWrites=true&w=majority'
+  'mongodb+srv://shivamJuu:testing123@cluster0.aoxsuov.mongodb.net/JuuBackend?retryWrites=true&w=majority'
 const connectDB = () => {
   return mongoose
     .connect(mongo_string, {
