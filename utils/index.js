@@ -41,9 +41,9 @@ const checkIfCartExists = async (tag) => {
   }
 };
 
-const checkItemPresentInCart = async (cart, productTag) => {
+const checkItemPresentInCart = async (cart, productID) => {
   for (const item of cart.items) {
-    if (item.productTag == productTag)
+    if (item.productID == productID)
       return { success: true, present: true, msg: 'item present' };
   }
   return { success: true, present: false, msg: 'item not present' };

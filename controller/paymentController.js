@@ -1,5 +1,6 @@
 // const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
+// Test key
 const stripe = require('stripe')(
   'sk_test_51Ms5sSSFh5lBV3HW2mxSXy2r3IqJElUQL7nnlxzkEg8jza6zpvhmWnId3xbrPHvP6lGT4PwMt3mL3Xetbk6NK31U00fpD6B1Ub'
 )
@@ -9,11 +10,14 @@ const Customer = require('../models/Customer')
 const Tag = require('../models/Tag')
 
 const calculateOrderAmount = (items) => {
-  let orderSum = 0
+  let amount = 0
+  let quantity = 0
   items.forEach((item) => {
-    orderSum += item.value
+    amount += item.value
+    quantity += item.quantity
   })
-  return orderSum * 100
+  amount *= 100
+  return { amount, quantity }
 }
 
 const getPaymentIntent = async (req, res) => {
@@ -30,20 +34,19 @@ const getPaymentIntent = async (req, res) => {
       })
     }
 
-    const amount = calculateOrderAmount(cart.items)
+    const { amount, quantity } = calculateOrderAmount(cart.items)
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency: 'inr',
     })
-    console.log('first')
     tag_with_cart.paymentIntent = paymentIntent
     await tag_with_cart.save()
     res.json({
       success: true,
       message: 'Payment Intent created successfully',
       paymentIntent: paymentIntent.client_secret,
-      checkoutInfo: { amount, ...cart },
+      checkoutInfo: { amount, ...cart, quantity },
     })
   } catch (error) {
     return res.status(500).json({

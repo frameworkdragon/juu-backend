@@ -34,7 +34,7 @@ const addProductToCart = async (req, res) => {
 
   const cart = tag_with_cart.cart
 
-  const product = await Product.findOne({ tag: productID })
+  const product = await Product.findOne({ productID })
 
   const response = await checkItemPresentInCart(cart, productID)
 
@@ -56,7 +56,7 @@ const addProductToCart = async (req, res) => {
   }
 
   const item = {
-    quantity:qty,
+    quantity: qty,
     value: product.price * qty,
     productID,
     price: product.price,
