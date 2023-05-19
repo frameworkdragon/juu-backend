@@ -9,13 +9,17 @@ const getCart = async (req, res) => {
 
   try {
     const tag_with_cart = await Tag.findOne({ tagID }).populate('cart')
-
-    if (tag_with_cart.cart)
-      return res.status(200).json({
-        success: true,
-        message: 'Cart exists',
-        cart: tag_with_cart.cart,
+    if (!tag_with_cart)
+      return res.status(400).json({
+        success: false,
+        message: 'Cart does not exist',
       })
+
+    return res.status(200).json({
+      success: true,
+      message: 'Cart exists',
+      cart: tag_with_cart.cart,
+    })
   } catch (err) {
     console.log(err)
     return res.status(400).json({ success: false, error: err })

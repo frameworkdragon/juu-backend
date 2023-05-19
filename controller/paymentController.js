@@ -1,9 +1,9 @@
-// const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 
 // Test key
-const stripe = require('stripe')(
-  'sk_test_51Ms5sSSFh5lBV3HW2mxSXy2r3IqJElUQL7nnlxzkEg8jza6zpvhmWnId3xbrPHvP6lGT4PwMt3mL3Xetbk6NK31U00fpD6B1Ub'
-)
+// const stripe = require('stripe')(
+//   'sk_test_51Ms5sSSFh5lBV3HW2mxSXy2r3IqJElUQL7nnlxzkEg8jza6zpvhmWnId3xbrPHvP6lGT4PwMt3mL3Xetbk6NK31U00fpD6B1Ub'
+// )
 
 const Cart = require('../models/Cart')
 const Customer = require('../models/Customer')
@@ -20,7 +20,7 @@ const calculateOrderAmount = (items) => {
   return { amount, quantity }
 }
 
-const getPaymentIntent = async (req, res) => {
+const createPaymentIntent = async (req, res) => {
   try {
     const { email } = req.body
 
@@ -35,11 +35,14 @@ const getPaymentIntent = async (req, res) => {
     }
 
     const { amount, quantity } = calculateOrderAmount(cart.items)
+    // const customer = await stripe.customers.create({ email })
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency: 'inr',
+      // customer: customer.id,
     })
+
     tag_with_cart.paymentIntent = paymentIntent
     await tag_with_cart.save()
     res.json({
@@ -78,11 +81,46 @@ const savePaymentDetails = async (req, res) => {
 
   return res.json({
     success: true,
-    message: 'Payment details saved susseccfully',
+    message: 'Payment details saved successfully',
   })
 }
 
+// Expose a endpoint as a webhook handler for asynchronous events.
+// This is your Stripe CLI webhook secret for testing your endpoint locally.
+const endpointSecret = "whsec_195f348b42541bd281c957dc067bada6ffba36e6d152b81dec802b515c1e1a64";
+const handlePaymentSucceed = async (req, res) => {
+  const sig = request.headers['stripe-signature'];
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+  } catch (err) {
+    response.status(400).send(`Webhook Error: ${err.message}`);
+    return;
+  }
+
+  // Handle the event
+  switch (event.type) {
+    case 'payment_intent.succeeded':
+      const paymentIntentSucceeded = event.data.object;
+      // Then define and call a function to handle the event payment_intent.succeeded
+      break;
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
+  response.send();
+
+}
+
+const getStripeKeys = async (req, res) => {
+  return res.status(200).json({ publishableKey: process.env.STRIPE_PUBLIC_KEY })
+}
 module.exports = {
-  getPaymentIntent,
+  getStripeKeys,
+  createPaymentIntent,
   savePaymentDetails,
+  handlePaymentSucceed,
 }
